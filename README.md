@@ -1,6 +1,6 @@
 # NumberToWords
 
-Класс для перевода числа в строковую форму - com.konstantin.ConverterNumToWords . В конструкторе из файла "dataName/nameUnits.txt" считываются названия порядков в формате "2 миллион"(2- степень тысячи) . Метод для перевода public String convertNumbToWords(BigInteger number) . Junit тесты и Data Driven Test находятся в классе com.konstantin.test.ConverterNumToWordsTest . Data Driven Test считывает информацию из файла "DataTest/TestNumber.xls" . Класс com.konstantin.ExampleConvert служит демонстрации работы с классом для преобразования числа . Проект запускать через в Intellij Idea через Import project .
+Класс для перевода числа в строковую форму - com.konstantin.ConverterNumToWords . В конструкторе из файла "dataName/nameUnits.txt" считываются названия порядков в формате "2 миллион"(2- степень тысячи) . Метод для перевода public String convertNumbToWords(BigInteger number) . Junit тесты и Data Driven Test находятся в классе com.konstantin.test.ConverterNumToWordsTest . Data Driven Test считывает информацию из файла "DataTest/TestNumber.xls" . Класс com.konstantin.ExampleConvert служит для демонстрации работы с классом , который преобразует число . Проект запускать через в Intellij Idea через Import project .
 
 Задание:
 Перевод числа в цифровой записи в строковую. Например 134345 будет "сто тридцать четыре тысячи триста сорок пять". * Учесть склонения - разница в окончаниях (к примеру, две и два).
