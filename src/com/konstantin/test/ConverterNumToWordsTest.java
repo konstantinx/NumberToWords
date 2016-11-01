@@ -14,9 +14,7 @@ import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by konstantin on 1.11.16.
- */
+
 public class ConverterNumToWordsTest {
 
 
@@ -25,34 +23,30 @@ public class ConverterNumToWordsTest {
 
     @Test
     public void testConvert_0to19() throws Exception {
-        String[] nameNum = new String[]{"ноль","один", "два", "три", "четыре",
+        String[] nameNum = new String[]{"ноль", "один", "два", "три", "четыре",
                 "пять", "шесть", "семь", "восемь", "девять", "десять", "одиннадцать", "двенадцать", "тринадцать",
                 "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
 
         System.out.println("Junit test: Convert to words numbers 0-19");
 
         for (int i = 0; i < 20; i++) {
-            System.out.println(i + " = " + Converter.convertNumbToWords(new BigInteger(String.valueOf(i))));
             assertEquals(" Error in the numbers  0-19", nameNum[i],
                     Converter.convertNumbToWords(new BigInteger(String.valueOf(i))));
         }
     }
 
 
-
     @Test
     public void testConvert_20to999() throws Exception {
 
         String[] nameNum = new String[]{"сорок", "семьдесят один", "сто", "двести два",
-                "пятьсот пятьдесят пять", "триста десять","девятьсот девяносто девять"};
+                "пятьсот пятьдесят пять", "триста десять", "девятьсот девяносто девять"};
         int numbers[] = new int[]{40, 71, 100, 202, 555, 310, 999};
 
         System.out.println("Junit test: Convert to words numbers 20-999");
 
         for (int i = 0; i < 7; i++) {
-            System.out.println(numbers[i] + " = " +
-                    Converter.convertNumbToWords(new BigInteger(String.valueOf(numbers[i]))));
-            assertEquals(" Error in the numbers  0-19",nameNum[i],
+            assertEquals(" Error in the numbers  0-19", nameNum[i],
                     Converter.convertNumbToWords(new BigInteger(String.valueOf(numbers[i]))));
         }
     }
@@ -69,9 +63,7 @@ public class ConverterNumToWordsTest {
         System.out.println("Junit test: Convert to words big numbers ");
 
         for (int i = 0; i < 3; i++) {
-            System.out.println(numbers[i] + " = " +
-                    Converter.convertNumbToWords(new BigInteger(String.valueOf(numbers[i]))));
-            assertEquals(" Error in the big numbers",nameNum[i],
+            assertEquals(" Error in the big numbers", nameNum[i],
                     Converter.convertNumbToWords(new BigInteger(String.valueOf(numbers[i]))));
         }
     }
@@ -86,13 +78,10 @@ public class ConverterNumToWordsTest {
         System.out.println("Junit test: Convert to words number exist units 1/2");
 
         for (int i = 0; i < 4; i++) {
-            System.out.println(numbers[i] + " = " +
+            assertEquals(" Error in the numbers exist units 1/2", nameNum[i],
                     Converter.convertNumbToWords(new BigInteger(String.valueOf(numbers[i]))));
-            assertEquals(" Error in the numbers exist units 1/2",nameNum[i ],
-                    Converter.convertNumbToWords(new BigInteger(String.valueOf(numbers[i ]))));
         }
     }
-
 
 
     @Test
@@ -112,16 +101,15 @@ public class ConverterNumToWordsTest {
                 int cellType = cell.getCellType();
                 switch (cellType) {
                     case Cell.CELL_TYPE_NUMERIC:
-                        System.out.print((inNumber=(long)cell.getNumericCellValue()) + " = ");
+                        inNumber = (long) cell.getNumericCellValue();
                         break;
                     case Cell.CELL_TYPE_STRING:
-                        System.out.print((inString=cell.getStringCellValue()));
+                        inString = cell.getStringCellValue();
                         break;
                     default:
                         break;
                 }
             }
-            System.out.println();
             assertEquals("Error in number: " + inNumber, inString,
                     Converter.convertNumbToWords(new BigInteger(String.valueOf(inNumber))));
         }

@@ -12,6 +12,7 @@ public class ConverterNumToWords {
     private final static String PATH_FILE = "dataName/nameUnits.txt";
     private final static int MALE_GENDER = 1;
     private final static int FEMALE_GENDER = -1;
+    private final static String SEPARATOR = " ";
 
     /**
      * Данный мап хранит все возможные наименования для составления имени триад .
@@ -91,17 +92,11 @@ public class ConverterNumToWords {
         if (!file.exists()) {
             throw new FileNotFoundException(file.getName());
         }
-        try {
-
-            BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-            try {
-                String tmpString;
-                while ((tmpString = br.readLine()) != null) {
-                    String Units[] = tmpString.split(" ");
-                    nameUnits.put(Integer.valueOf(Units[0]), Units[1]);
-                }
-            } finally {
-                br.close();
+        try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()))) {
+            String tmpString;
+            while ((tmpString = br.readLine()) != null) {
+                String Units[] = tmpString.split(SEPARATOR);
+                nameUnits.put(Integer.valueOf(Units[0]), Units[1]);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -116,24 +111,24 @@ public class ConverterNumToWords {
         int hundreds = Character.getNumericValue(triad.charAt(0));
         int dozens = Character.getNumericValue(triad.charAt(1));
         int units = Character.getNumericValue(triad.charAt(2));
-        if (Objects.equals(triad,"000")) return "";
+        if (Objects.equals(triad, "000")) return "";
         String words = "";
         /*Триады высчитываются путём умножения значений порядков(сотни,десятки,еденицы)на 100/10/1
          соответственно и взятием по этому ключу имени порядка*/
         if (hundreds != 0)
-            words += nameTriad.get(hundreds * 100) + " ";
+            words += nameTriad.get(hundreds * 100) + SEPARATOR;
         if (dozens == 1 && units <= 9 && units >= 0)   //Для чисел от 10 до 19 ключи для мапа считаются отдельно
-            words += nameTriad.get(dozens * 10 + units) + " ";
+            words += nameTriad.get(dozens * 10 + units) + SEPARATOR;
         else {
             if (dozens != 0)
-                words += nameTriad.get(dozens * 10) + " ";
+                words += nameTriad.get(dozens * 10) + SEPARATOR;
             if (units != 0 && units > 2)
-                words += nameTriad.get(units) + " ";
+                words += nameTriad.get(units) + SEPARATOR;
             /*Если в еденицах числа имеется 1 или 2 , то ключ для мапа умножается на переданную константу
              gender. MALE_GENDER является 1 и значение ключа не меняется - один/два.
              FEMALE_GENDER является -1 и значения инвентируются в -1/-2 что есть женские формы одна/две.*/
             else if (units != 0 && units <= 2)
-                words += nameTriad.get(units * gender) + " ";
+                words += nameTriad.get(units * gender) + SEPARATOR;
         }
         return words;
     }
@@ -158,8 +153,8 @@ public class ConverterNumToWords {
         if (nameUnits.get(degree) == null && degree != 0) throw new NullPointerException("Dont exist name " +
                 degree + " thousands of degrees");
         if (Objects.equals(number, "000")) return "";
-        if (degree == 1) return nameUnits.get(degree) + endings[0][selectForm(Integer.parseInt(number))] + " ";
-        if (degree > 1) return nameUnits.get(degree) + endings[1][selectForm(Integer.parseInt(number))] + " ";
+        if (degree == 1) return nameUnits.get(degree) + endings[0][selectForm(Integer.parseInt(number))] + SEPARATOR;
+        if (degree > 1) return nameUnits.get(degree) + endings[1][selectForm(Integer.parseInt(number))] + SEPARATOR;
         else
             return "";
     }
@@ -182,7 +177,7 @@ public class ConverterNumToWords {
 
         /* Дополняет строку нялми до кратности 3 для удобной работы с подстроками по 3 символа*/
         for (int i = 0; i < numberStr.length() % 3; i++)
-            numberStr = '0' + numberStr;
+            numberStr = "0" + numberStr;
 
         /*
           Конвертирует в слова ,попорядку по всей строке, группу из 3 цифр и добовляет имя порядка из
