@@ -1,7 +1,10 @@
 package com.konstantin;
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,29 +80,28 @@ public class ConverterNumToWords {
 
 
     public ConverterNumToWords() {
-        try {
-            readNameUnitFromFile();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+
+        readNameUnitFromFile();
+
     }
 
     /**
      * Чтение из файла и запись наименований в nameUnits.
      */
-    private void readNameUnitFromFile() throws FileNotFoundException {
-        File file = new File(PATH_FILE);
-        if (!file.exists()) {
-            throw new FileNotFoundException(file.getName());
-        }
-        try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsoluteFile()))) {
-            String tmpString;
-            while ((tmpString = br.readLine()) != null) {
-                String Units[] = tmpString.split(SEPARATOR);
+    private void readNameUnitFromFile() {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(PATH_FILE), "UTF8"))) {
+            String tmpLineStr;
+            String Units[];
+            while ((tmpLineStr = br.readLine()) != null) {
+                Units = tmpLineStr.split(SEPARATOR);
                 nameUnits.put(Integer.valueOf(Units[0]), Units[1]);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
