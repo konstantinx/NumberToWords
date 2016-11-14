@@ -13,8 +13,8 @@ import java.util.Objects;
 public class ConverterNumToWords {
 
     private boolean FLAG_READER = false;
-    private final static  String PATH_FILE_UNITS = "dataName/nameUnits.txt";
-    private final static String PATH_FILE_TRIADS = "dataName/nameTriads.txt";
+    private final String PATH_FILE_UNITS = "dataName/nameUnits.txt";
+    private final String PATH_FILE_TRIADS = "dataName/nameTriads.txt";
     private final static int MALE_GENDER = 1;
     private final static int FEMALE_GENDER = -1;
     private final static String SEPARATOR = " ";
@@ -23,22 +23,54 @@ public class ConverterNumToWords {
      * Данный мап хранит все возможные наименования для составления имени триад .
      * Ключём являются числовые представления .
      */
-    private final Map<Integer, String> nameTriad = new HashMap<>() ;
+    private final Map<Integer, String> nameTriad = new HashMap<>();
 
     /**
      * Мап для хранения  наименования чисел состоящих из латинского имени степени тысячи .
      * Ключём служит степень.
-     * Тысяча внесена как исключение. Заполняется из файла в конструкторе
      */
-    private final Map<Integer, String> nameUnits = new HashMap<Integer, String>() {{
-        put(1, "тысяч");
-    }};
+    private final Map<Integer, String> nameUnits = new HashMap<>();
 
     /**
      * Окочания для тысяч- и -иллионов/-ардов соответственно.
      */
     private final String[][] endings = {{"а", "и", ""}, {"", "а", "ов"}};
 
+    public String convertNumbToWords(BigInteger number) {
+        readResources();
+
+        String numberStr = number.toString();
+
+        if (Objects.equals(numberStr, "0")) return nameTriad.get(0);
+
+        String nameNumber = "";
+
+        /* Если есть минус добовляем к итоговой строкеи удаляем минус из строки */
+        if (numberStr.charAt(0) == '-') {
+            nameNumber += "минус ";
+            numberStr = numberStr.substring(1);
+        }
+
+        /* Дополняет строку нялми до кратности 3 для удобной работы с подстроками по 3 символа*/
+        for (int i = 0; i < numberStr.length() % 3; i++)
+            numberStr = "0" + numberStr;
+
+        /*
+          Конвертирует в слова ,попорядку по всей строке, группу из 3 цифр и добовляет имя порядка из
+          мап nameUnit .Если степень 1(тысячи) передаём константу FEMALE_GENDER для конвертирования 1/2
+          в форму женского рода , иначе передаётся MALE_GENDER
+          */
+        for (int i = 0; i < numberStr.length() / 3; i++) {
+            int degree = numberStr.length() / 3 - i - 1;
+            if (degree == 1)
+                nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), FEMALE_GENDER) +
+                        getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
+            else
+                nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), MALE_GENDER) +
+                        getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
+        }
+        return nameNumber.trim();
+    }
 
     private void readResources() {
         if (!FLAG_READER) {
@@ -48,10 +80,8 @@ public class ConverterNumToWords {
         }
     }
 
-    /**
-     * Чтение из файла и запись наименований в nameUnits.
-     */
-    private void readNameFromFile(Map<Integer,String> receiver, String path) {
+
+    private void readNameFromFile(Map<Integer, String> receiver, String path) {
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(path), "UTF8"))) {
@@ -63,8 +93,6 @@ public class ConverterNumToWords {
                     receiver.put(Integer.valueOf(Units[0]), Units[1]);
                 }
             }
-
-
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -101,18 +129,6 @@ public class ConverterNumToWords {
     }
 
     /**
-     * Получаем номер окончания  для названия из мап nameUnit, основываясь на числе n ,в массиве ending
-     */
-    private int selectForm(int n) {
-        n = Math.abs(n) % 100;
-        int n1 = n % 10;
-        if (n > 10 && n < 20) return 2;
-        if (n1 > 1 && n1 < 5) return 1;
-        if (n1 == 1) return 0;
-        return 2;
-    }
-
-    /**
      * Если название числа со степенью тысячи degree существует и строка number не равна "000" , то возвращает
      * название с окончанием основаным на числе number.
      */
@@ -127,43 +143,15 @@ public class ConverterNumToWords {
     }
 
     /**
-     * Конвертирует число number в запись словами
+     * Получаем номер окончания  для названия из мап nameUnit, основываясь на числе n ,в массиве ending
      */
-    public String convertNumbToWords(BigInteger number) {
-        readResources ();
-
-        String numberStr = number.toString();
-
-        if (Objects.equals(numberStr, "0")) return nameTriad.get(0);
-
-        String nameNumber = "";
-
-        /* Если есть минус добовляем к итоговой строкеи удаляем минус из строки */
-        if (numberStr.charAt(0) == '-') {
-            nameNumber += "минус ";
-            numberStr = numberStr.substring(1);
-        }
-
-        /* Дополняет строку нялми до кратности 3 для удобной работы с подстроками по 3 символа*/
-        for (int i = 0; i < numberStr.length() % 3; i++)
-            numberStr = "0" + numberStr;
-
-        /*
-          Конвертирует в слова ,попорядку по всей строке, группу из 3 цифр и добовляет имя порядка из
-          мап nameUnit .Если степень 1(тысячи) передаём константу FEMALE_GENDER для конвертирования 1/2
-          в форму женского рода , иначе передаётся MALE_GENDER
-          */
-        for (int i = 0; i < numberStr.length() / 3; i++) {
-            int degree = numberStr.length() / 3 - i - 1;
-            if (degree == 1)
-                nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), FEMALE_GENDER) +
-                        getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
-            else
-                nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), MALE_GENDER) +
-                        getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
-        }
-        return nameNumber.trim();
+    private int selectForm(int n) {
+        n = Math.abs(n) % 100;
+        int n1 = n % 10;
+        if (n > 10 && n < 20) return 2;
+        if (n1 > 1 && n1 < 5) return 1;
+        if (n1 == 1) return 0;
+        return 2;
     }
-
 
 }

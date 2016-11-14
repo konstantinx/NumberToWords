@@ -1,17 +1,13 @@
 package com.konstantin.test;
 
 import com.konstantin.ConverterNumToWords;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-/**
- * Created by konstantin on 14.11.16.
- */
+
 public class NewConverterNumToWordsTest {
 
     private final ConverterNumToWords Converter = new ConverterNumToWords();
@@ -22,20 +18,18 @@ public class NewConverterNumToWordsTest {
             {"123456789", "сто двадцать три миллиона четыреста пятьдесят шесть тысяч семьсот восемьдесят девять"}};
 
     @Test(expected = NullPointerException.class)
-    public void convertNumbToWords() {
+    public void testConvertOverLimitNumber() {
+        /*Конвертируем число , для которого отсуствует наименование в ресурсах .
+        Если вылетает NullPointerException , то тест считается успешно пройденным*/
         Converter.convertNumbToWords(new BigInteger("41242141242142142142421421421421421421" +
                 "42142141242142142142142142142141241241242121421412412"));
     }
 
     @Test
-    public void testConvertNumberToWords()throws Exception
-    {
-       for(String [] number:testNumber){
-           assertEquals(number[1],
-                   Converter.convertNumbToWords(new BigInteger(number[0])));
-       }
+    public void testConvertNumberToWords() throws Exception {
+        for (String[] number : testNumber) {
+            assertEquals(number[1],
+                    Converter.convertNumbToWords(new BigInteger(number[0])));
+        }
     }
-
-
-
 }

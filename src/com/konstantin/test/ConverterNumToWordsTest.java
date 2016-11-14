@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 

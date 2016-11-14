@@ -14,13 +14,12 @@ import java.util.Objects;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by konstantin on 14.11.16.
- */
+
 public class ConverterNumToWordsFromTextFileTest {
 
-    private BufferedReader br=null;
+    private BufferedReader br = null;
     private final ConverterNumToWords Converter = new ConverterNumToWords();
+
     @Before
     public void setUp() throws IOException {
         br = new BufferedReader(
@@ -38,18 +37,15 @@ public class ConverterNumToWordsFromTextFileTest {
 
 
     @Test
-    public void testConvertDataFromFile ()throws IOException
-    {
+    public void testConvertDataFromFile() throws IOException {
         String tmpLineStr;
         String Units[];
         while ((tmpLineStr = br.readLine()) != null) {
             if (!Objects.equals(tmpLineStr, "")) {
                 Units = tmpLineStr.split(":");
-                assertEquals( Units[1],
+                assertEquals(Units[1],
                         Converter.convertNumbToWords(new BigInteger(Units[0])));
             }
         }
     }
-
-
 }
