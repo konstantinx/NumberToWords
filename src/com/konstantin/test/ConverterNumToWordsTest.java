@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class ConverterNumToWordsTest {
 
 
-    ConverterNumToWords Converter = new ConverterNumToWords();
+    private final ConverterNumToWords Converter = new ConverterNumToWords();
 
 
     @Test
@@ -92,12 +92,8 @@ public class ConverterNumToWordsTest {
         long inNumber = 0;
         String inString = null;
         Sheet sheet = wb.getSheetAt(0);
-        Iterator<Row> it = sheet.iterator();
-        while (it.hasNext()) {
-            Row row = it.next();
-            Iterator<Cell> cells = row.iterator();
-            while (cells.hasNext()) {
-                Cell cell = cells.next();
+        for (Row row : sheet) {
+            for (Cell cell : row) {
                 int cellType = cell.getCellType();
                 switch (cellType) {
                     case Cell.CELL_TYPE_NUMERIC:

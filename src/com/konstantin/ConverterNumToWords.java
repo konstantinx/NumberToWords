@@ -12,7 +12,9 @@ import java.util.Objects;
 
 public class ConverterNumToWords {
 
-    private final static String PATH_FILE = "dataName/nameUnits.txt";
+    private boolean FLAG_READER = false;
+    private final static  String PATH_FILE_UNITS = "dataName/nameUnits.txt";
+    private final static String PATH_FILE_TRIADS = "dataName/nameTriads.txt";
     private final static int MALE_GENDER = 1;
     private final static int FEMALE_GENDER = -1;
     private final static String SEPARATOR = " ";
@@ -21,55 +23,14 @@ public class ConverterNumToWords {
      * Данный мап хранит все возможные наименования для составления имени триад .
      * Ключём являются числовые представления .
      */
-    private static final Map<Integer, String> nameTriad = new HashMap<Integer, String>() {{
-        put(-2, "две");
-        put(-1, "одна");
-        put(0, "ноль");
-        put(1, "один");
-        put(2, "два");
-        put(3, "три");
-        put(4, "четыре");
-        put(5, "пять");
-        put(6, "шесть");
-        put(7, "семь");
-        put(8, "восемь");
-        put(9, "девять");
-        put(10, "десять");
-        put(11, "одиннадцать");
-        put(12, "двенадцать");
-        put(13, "тринадцать");
-        put(14, "четырнадцать");
-        put(15, "пятнадцать");
-        put(16, "шестнадцать");
-        put(17, "семнадцать");
-        put(18, "восемнадцать");
-        put(19, "девятнадцать");
-        put(20, "двадцать");
-        put(30, "тридцать");
-        put(40, "сорок");
-        put(50, "пятьдесят");
-        put(60, "шестьдесят");
-        put(70, "семьдесят");
-        put(80, "восемьдесят");
-        put(90, "девяносто");
-        put(100, "сто");
-        put(200, "двести");
-        put(300, "триста");
-        put(400, "четыреста");
-        put(500, "пятьсот");
-        put(600, "шестьсот");
-        put(700, "семьсот");
-        put(800, "восемьсот");
-        put(900, "девятьсот");
-
-    }};
+    private final Map<Integer, String> nameTriad = new HashMap<>() ;
 
     /**
      * Мап для хранения  наименования чисел состоящих из латинского имени степени тысячи .
      * Ключём служит степень.
      * Тысяча внесена как исключение. Заполняется из файла в конструкторе
      */
-    private Map<Integer, String> nameUnits = new HashMap<Integer, String>() {{
+    private final Map<Integer, String> nameUnits = new HashMap<Integer, String>() {{
         put(1, "тысяч");
     }};
 
@@ -79,24 +40,28 @@ public class ConverterNumToWords {
     private final String[][] endings = {{"а", "и", ""}, {"", "а", "ов"}};
 
 
-    public ConverterNumToWords() {
-
-        readNameUnitFromFile();
-
+    private void readResources() {
+        if (!FLAG_READER) {
+            readNameFromFile(nameUnits, PATH_FILE_UNITS);
+            readNameFromFile(nameTriad, PATH_FILE_TRIADS);
+            FLAG_READER = true;
+        }
     }
 
     /**
      * Чтение из файла и запись наименований в nameUnits.
      */
-    private void readNameUnitFromFile() {
+    private void readNameFromFile(Map<Integer,String> receiver, String path) {
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
-                        new FileInputStream(PATH_FILE), "UTF8"))) {
+                        new FileInputStream(path), "UTF8"))) {
             String tmpLineStr;
             String Units[];
             while ((tmpLineStr = br.readLine()) != null) {
-                Units = tmpLineStr.split(SEPARATOR);
-                nameUnits.put(Integer.valueOf(Units[0]), Units[1]);
+                if (!Objects.equals(tmpLineStr, "")) {
+                    Units = tmpLineStr.split(SEPARATOR);
+                    receiver.put(Integer.valueOf(Units[0]), Units[1]);
+                }
             }
 
 
@@ -152,7 +117,7 @@ public class ConverterNumToWords {
      * название с окончанием основаным на числе number.
      */
     private String getFormNameUnit(int degree, String number) {
-        if (nameUnits.get(degree) == null && degree != 0) throw new NullPointerException("Dont exist name " +
+        if (nameUnits.get(degree) == null && degree != 0) throw new NullPointerException("Don't exist name " +
                 degree + " thousands of degrees");
         if (Objects.equals(number, "000")) return "";
         if (degree == 1) return nameUnits.get(degree) + endings[0][selectForm(Integer.parseInt(number))] + SEPARATOR;
@@ -165,6 +130,8 @@ public class ConverterNumToWords {
      * Конвертирует число number в запись словами
      */
     public String convertNumbToWords(BigInteger number) {
+        readResources ();
+
         String numberStr = number.toString();
 
         if (Objects.equals(numberStr, "0")) return nameTriad.get(0);
