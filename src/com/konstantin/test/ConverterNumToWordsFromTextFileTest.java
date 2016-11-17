@@ -21,14 +21,14 @@ public class ConverterNumToWordsFromTextFileTest {
     private final ConverterNumToWords Converter = new ConverterNumToWords();
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws Exception {
         br = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream("DataTest/TestNumber.txt"), "UTF8"));
     }
 
     @After
-    public void tearDown() throws IOException {
+    public void tearDown() throws Exception {
         if (br != null) {
             br.close();
         }
@@ -37,7 +37,7 @@ public class ConverterNumToWordsFromTextFileTest {
 
 
     @Test
-    public void testConvertDataFromFile() throws IOException {
+    public void testConvertDataFromFile() throws Exception {
         String tmpLineStr;
         String Units[];
         while ((tmpLineStr = br.readLine()) != null) {

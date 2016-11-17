@@ -23,20 +23,20 @@ public class ConverterNumToWords {
      * Данный мап хранит все возможные наименования для составления имени триад .
      * Ключём являются числовые представления .
      */
-    private final Map<Integer, String> nameTriad = new HashMap<>();
+    private Map<Integer, String> nameTriad;
 
     /**
      * Мап для хранения  наименования чисел состоящих из латинского имени степени тысячи .
      * Ключём служит степень.
      */
-    private final Map<Integer, String> nameUnits = new HashMap<>();
+    private Map<Integer, String> nameUnits ;
 
     /**
      * Окочания для тысяч- и -иллионов/-ардов соответственно.
      */
     private final String[][] endings = {{"а", "и", ""}, {"", "а", "ов"}};
 
-    public String convertNumbToWords(BigInteger number) {
+    public String convertNumbToWords(BigInteger number) throws IOException {
         readResources();
 
         String numberStr = number.toString();
@@ -60,28 +60,33 @@ public class ConverterNumToWords {
           мап nameUnit .Если степень 1(тысячи) передаём константу FEMALE_GENDER для конвертирования 1/2
           в форму женского рода , иначе передаётся MALE_GENDER
           */
-        for (int i = 0; i < numberStr.length() / 3; i++) {
-            int degree = numberStr.length() / 3 - i - 1;
-            if (degree == 1)
-                nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), FEMALE_GENDER) +
-                        getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
-            else
-                nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), MALE_GENDER) +
-                        getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
+        try {
+            for (int i = 0; i < numberStr.length() / 3; i++) {
+                int degree = numberStr.length() / 3 - i - 1;
+                if (degree == 1)
+                    nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), FEMALE_GENDER) +
+                            getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
+                else
+                    nameNumber += convertTriad(numberStr.substring((i * 3), i * 3 + 3), MALE_GENDER) +
+                            getFormNameUnit(degree, numberStr.substring((i * 3), i * 3 + 3));
+            }
+        } catch (NullPointerException ex) {
+            throw new IllegalArgumentException(ex);
         }
         return nameNumber.trim();
     }
 
-    private void readResources() {
+    private void readResources() throws IOException {
         if (!FLAG_READER) {
-            readNameFromFile(nameUnits, PATH_FILE_UNITS);
-            readNameFromFile(nameTriad, PATH_FILE_TRIADS);
+            nameUnits = initNameFromFile(PATH_FILE_UNITS);
+            nameTriad = initNameFromFile(PATH_FILE_TRIADS);
             FLAG_READER = true;
         }
     }
 
 
-    private void readNameFromFile(Map<Integer, String> receiver, String path) {
+    private Map<Integer, String> initNameFromFile( String path) throws IOException {
+        Map<Integer, String> receiver = new HashMap<>();
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(path), "UTF8"))) {
@@ -94,8 +99,9 @@ public class ConverterNumToWords {
                 }
             }
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw ex;
         }
+        return receiver;
     }
 
     /**
@@ -133,11 +139,13 @@ public class ConverterNumToWords {
      * название с окончанием основаным на числе number.
      */
     private String getFormNameUnit(int degree, String number) {
-        if (nameUnits.get(degree) == null && degree != 0) throw new NullPointerException("Don't exist name " +
-                degree + " thousands of degrees");
+        if (nameUnits.get(degree) == null && degree != 0)
+            throw new NullPointerException("Don't exist name " + degree + " thousands of degrees");
         if (Objects.equals(number, "000")) return "";
-        if (degree == 1) return nameUnits.get(degree) + endings[0][selectForm(Integer.parseInt(number))] + SEPARATOR;
-        if (degree > 1) return nameUnits.get(degree) + endings[1][selectForm(Integer.parseInt(number))] + SEPARATOR;
+        if (degree == 1) return nameUnits.get(degree) +
+                endings[0][selectForm(Integer.parseInt(number))] + SEPARATOR;
+        if (degree > 1) return nameUnits.get(degree) +
+                endings[1][selectForm(Integer.parseInt(number))] + SEPARATOR;
         else
             return "";
     }

@@ -1,15 +1,18 @@
 package com.konstantin.test;
 
 import com.konstantin.ConverterNumToWords;
+import com.konstantin.ExampleConvert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 
 
 public class NewConverterNumToWordsTest {
-
     private final ConverterNumToWords Converter = new ConverterNumToWords();
 
     private final String[][] testNumber = {{"0", "ноль"}, {"1", "один"},
@@ -17,12 +20,12 @@ public class NewConverterNumToWordsTest {
             {"72", "семьдесят два"}, {"310", "триста десять"}, {"1000", "одна тысяча"}, {"2000", "две тысячи"},
             {"123456789", "сто двадцать три миллиона четыреста пятьдесят шесть тысяч семьсот восемьдесят девять"}};
 
-    @Test(expected = NullPointerException.class)
-    public void testConvertOverLimitNumber() {
+    @Test(expected = IllegalArgumentException.class)
+    public void testConvertOverLimitNumber() throws Exception {
         /*Конвертируем число , для которого отсуствует наименование в ресурсах .
         Если вылетает NullPointerException , то тест считается успешно пройденным*/
-        Converter.convertNumbToWords(new BigInteger("41242141242142142142421421421421421421" +
-                "42142141242142142142142142142141241241242121421412412"));
+            Converter.convertNumbToWords(new BigInteger("41242141242142142142421421421421421421" +
+                    "42142141242142142142142142142141241241242121421412412"));
     }
 
     @Test
