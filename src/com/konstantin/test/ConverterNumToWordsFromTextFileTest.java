@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class ConverterNumToWordsFromTextFileTest {
 
-    private BufferedReader bufferedReader2 = null;
+    private BufferedReader bufferedReader = null;
     private final ConverterNumToWords Converter = new ConverterNumToWords();
 
     @Before
