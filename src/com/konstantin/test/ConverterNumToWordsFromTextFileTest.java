@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.Objects;
@@ -17,22 +16,22 @@ import static org.junit.Assert.*;
 
 public class ConverterNumToWordsFromTextFileTest {
 
-    private BufferedReader br = null;
+    private BufferedReader bufferedReader2 = null;
     private final ConverterNumToWords Converter = new ConverterNumToWords();
 
     @Before
     public void setUp() throws Exception {
-        br = new BufferedReader(
+        bufferedReader = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream("DataTest/TestNumber.txt"), "UTF8"));
     }
 
     @After
     public void tearDown() throws Exception {
-        if (br != null) {
-            br.close();
+        if (bufferedReader != null) {
+            bufferedReader.close();
         }
-        br = null;
+        bufferedReader = null;
     }
 
 
@@ -40,7 +39,7 @@ public class ConverterNumToWordsFromTextFileTest {
     public void testConvertDataFromFile() throws Exception {
         String tmpLineStr;
         String Units[];
-        while ((tmpLineStr = br.readLine()) != null) {
+        while ((tmpLineStr = bufferedReader.readLine()) != null) {
             if (!Objects.equals(tmpLineStr, "")) {
                 Units = tmpLineStr.split(":");
                 assertEquals(Units[1],
